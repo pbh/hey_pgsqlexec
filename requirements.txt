@@ -1,0 +1,4 @@
+unittest2
+mock
+psycopg2
+https://github.com/pbh/hey_dl/zipball/master

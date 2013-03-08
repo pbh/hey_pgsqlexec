@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='hey_pgsqlexec',
-    version='1.0.0',
+    version='1.0.1',
     author='Paul Heymann',
     author_email='hey_pgsqlexec@heymann.be',
     packages=['hey_pgsqlexec', ],

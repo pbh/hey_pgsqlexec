@@ -12,9 +12,13 @@
 import os
 import warnings
 import re
+import psycopg2
 
 warnings.filterwarnings("ignore", "tempnam", RuntimeWarning)
 warnings.filterwarnings("ignore", "tmpnam", RuntimeWarning)
+
+_DEFAULT_CONNECTION_STRING = None
+_DEFAULT_CONNECTION = None
 
 def _read_file_with_localizer(fn, localizer=None):
     s = ''
@@ -45,9 +49,36 @@ class PGSQLExec(object):
     working with pre-written, static SQL files easier.
     """
 
+    @staticmethod
+    def set_default_connection(connect_string):
+        global _DEFAULT_CONNECTION_STRING
+
+        _DEFAULT_CONNECTION_STRING = connect_string
+
+    @staticmethod
+    def reset_default_connection():
+        global _DEFAULT_CONNECTION
+        global _DEFAULT_CONNECTION_STRING
+
+        if _DEFAULT_CONNECTION_STRING is not None:
+            _DEFAULT_CONNECTION = psycopg2.connect(
+                _DEFAULT_CONNECTION_STRING)
+        else:
+            raise RuntimeError(
+                'Tried to reset connection, but no default connection string set.')
+
     def __init__(self, connection=None, output_cwd=None, name=None, cursor=None):
+        global _DEFAULT_CONNECTION
+        global _DEFAULT_CONNECTION_STRING
+
         self._sql = ''
         self._cwd = output_cwd
+
+        if connection is None:
+            if _DEFAULT_CONNECTION_STRING is not None:
+                if _DEFAULT_CONNECTION is None:
+                    PGSQLExec.reset_default_connection()
+                connection = _DEFAULT_CONNECTION
 
         if (connection is not None) and (cursor is not None):
             print connection

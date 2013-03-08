@@ -3,7 +3,7 @@ import os
 import re
 import hey_dl
 import hey_pgsqlexec
-from config import get_pg_connection
+from config import get_pg_connection, get_pg_connection_string
 
 class PGSQLExecTestCase(unittest2.TestCase):
     def setUp(self):
@@ -22,6 +22,15 @@ class PGSQLExecTestCase(unittest2.TestCase):
         assert (hey_pgsqlexec.PGSQLExec(self.conn)
                 .append_string('select * from foo;')
                 .get_sql().strip().find('select * from foo;')) > 0
+
+    def test_get_rows_with_default(self):
+        hey_pgsqlexec.PGSQLExec.set_default_connection(
+            get_pg_connection_string())
+
+        assert (hey_pgsqlexec.PGSQLExec()
+                .append_string("SELECT 1,2,3,4,5,6,7,8,9;")
+                .execute()
+                .get_rows() > 5)
 
     def test_get_rows(self):
         assert (hey_pgsqlexec.PGSQLExec(self.conn)

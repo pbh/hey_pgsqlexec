@@ -172,3 +172,14 @@ INSERT INTO "pgsqlexec_test_create_tab" (foo, bar) VALUES (3,3);
                 .append_file('txt/check_append.sql', localizer=self._dl)
                 .execute()
                 .get_rows()[0][0]) == 4
+
+    def test_append_dir_get_rows(self):
+        self.assertEqual(
+            len(
+                hey_pgsqlexec.PGSQLExec(self.conn)
+                .append_dir('txt/sql_dir', localizer=self._dl)
+                .append_string(
+                    """SELECT * FROM pgsqlexec_test_tab1 NATURAL JOIN pgsqlexec_test_tab2""")
+                .execute()
+                .get_rows()), 2)
+

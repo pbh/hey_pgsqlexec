@@ -132,6 +132,25 @@ class PGSQLExec(object):
 
         return self
 
+    def append_dir(self, dir_name, localizer=None):
+        true_dir_name = dir_name
+
+        if localizer is not None:
+            true_dir_name = localizer.path(dir_name)
+
+        sql_files = []
+
+        for root, dirs, files in os.walk(true_dir_name):
+            for name in files:
+                if name.endswith('.sql'):
+                    sql_files.append(
+                        os.path.join(root, name))
+
+        for sql_fn in sql_files:
+            self.append_file(sql_fn)
+
+        return self
+
     def execute_to_csv_unsafe(self, override=False):
         """
         Assuming a SELECT has been appended, create a CSV file of the output.

@@ -1,5 +1,5 @@
 hey_pgsqlexec
-======
+=============
 A simple executable object for dumping SQL from files into a PostgreSQL
 database through psycopg2.
 
